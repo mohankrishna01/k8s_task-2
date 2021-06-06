@@ -1,0 +1,50 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata: 
+  name: myd-wp 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: web 
+    matchExpressions: 
+      - {key: tier, operator: In, values: [frontend]} 
+  template: 
+       metadata: 
+         name: myp-wp 
+         labels: 
+           app: web 
+           tier: frontend 
+       spec: 
+          containers: 
+          - name: myc-wp 
+            image: wordpress
+            ports: 
+              - containerPort: 80 
+            volumeMounts: 
+            - name: mys-wp
+              mountPath: /var/www/html/
+            env: 
+            - name: WORDPRESS_DB_HOST 
+              value: myd-mq.default.svc.cluster.local
+            - name: WORDPRESS_DB_NAME
+              valueFrom:   
+                  secretKeyRef: 
+                     name: myst 
+                     key: MYSQL_DATABASE
+            - name: WORDPRESS_DB_USER 
+              valueFrom: 
+                secretKeyRef: 
+                    name: myst 
+                    key: MYSQL_USER 
+            - name: WORDPRESS_DB_PASSWORD 
+              valueFrom: 
+                 secretKeyRef: 
+                    name: myst 
+                    key: MYSQL_PASSWORD 
+          volumes: 
+              - name: mys-wp 
+                persistentVolumeClaim: 
+                    claimName: mypvc-wp
+
+                                  

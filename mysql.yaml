@@ -1,0 +1,52 @@
+apiVersion: apps/v1 
+kind: Deployment 
+metadata:
+  name: myd-mq 
+spec: 
+  replicas: 1 
+  selector: 
+    matchLabels: 
+      app: db 
+    matchExpressions: 
+    - {key: tier, operator: In, values: [backend]} 
+  template: 
+      metadata: 
+        name: myp-mq 
+        labels: 
+          app: db 
+          tier: backend 
+      spec: 
+        containers: 
+        - name: myc-mq 
+          image: mysql 
+          ports: 
+          -  containerPort: 8080 
+          volumeMounts: 
+            - name: mys-mq 
+              mountPath: /var/lib/mysql/ 
+          env: 
+          - name: MYSQL_DATABASE
+            valueFrom: 
+              secretKeyRef: 
+                name: myst  
+                key: MYSQL_DATABASE
+          - name: MYSQL_USER 
+            valueFrom: 
+              secretKeyRef: 
+                name: myst 
+                key: MYSQL_USER 
+          - name: MYSQL_PASSWORD 
+            valueFrom: 
+              secretKeyRef: 
+                name: myst 
+                key: MYSQL_PASSWORD
+          - name: MYSQL_ROOT_PASSWORD 
+            valueFrom: 
+              secretKeyRef: 
+                name: myst 
+                key: MYSQL_ROOT_PASSWORD
+        volumes:
+          - name: mys-mq
+            persistentVolumeClaim:
+             claimName: mypvc-mq
+        

@@ -1,0 +1,10 @@
+apiVersion: v1 
+kind: Secret 
+metadata: 
+  name: myst 
+type: Opaque 
+data: 
+  MYSQL_DATABASE: cmVkaGF0
+  MYSQL_USER: cmVkaGF0
+  MYSQL_PASSWORD: cmVkaGF0
+  MYSQL_ROOT_PASSWORD: cmVkaGF0
